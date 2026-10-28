@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Xml.Linq;
 using webdammay.dammay.Application.Command.Interfaces;
-
+using webdammay.dammay.API.Middlewares;
 using webdammay.dammay.Infrastructure.Persistence;
 using webdammay.dammay.Infrastructure.Services;
 using webdammay.Infrastructure.Services;
@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer(); 
 builder.Services.AddSwaggerGen();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 // Đăng ký MediatR
 builder.Services.AddMediatR(cfg =>
