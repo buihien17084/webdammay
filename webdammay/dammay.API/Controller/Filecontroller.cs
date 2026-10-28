@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using webdammay.dammay.Application.Query.GetFiles;
 using webdammay.dammay.Application.Command.UploadFile;
+using webdammay.dammay.Application.Command.DeleteFile;
 using Microsoft.AspNetCore.Authorization;
 namespace webdammay.dammay.API.Controller
 {
@@ -51,6 +52,16 @@ namespace webdammay.dammay.API.Controller
             var result= await _mediator.Send(query);
             return File(result.FileStream,result.ContentType, result.FileName);
          }
+        [HttpDelete("{id}/Delete")]
+        public async Task<IActionResult> Delete(Guid Id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { Message = "Không tìm thấy danh tính người dùng." });
+            var command = new DeleteFile(Id, userId);
+            var result=await _mediator.Send(command);
+            return Ok(new { Message ="Xóa File thành công.",Data=result});
+        }
 
     }
 }
