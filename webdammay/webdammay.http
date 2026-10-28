@@ -1,0 +1,6 @@
+@webdammay_HostAddress = http://localhost:5261
+
+GET {{webdammay_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
