@@ -18,18 +18,32 @@ public class GlobalExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        _logger.LogError(exception, "Đã xảy ra lỗi: {Message}", exception.Message);
+        // 1. Ghi log lỗi lại để phục vụ việc debug
+        _logger.LogError(exception, "Đã xảy ra lỗi không xử lý: {Message}", exception.Message);
 
-        httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        // 2. Phân loại mã HTTP Status tương ứng với từng kiểu Exception
+        var statusCode = exception switch
+        {
+            KeyNotFoundException => StatusCodes.Status404NotFound,           // 404
+            UnauthorizedAccessException => StatusCodes.Status401Unauthorized, // 401
+            ArgumentException => StatusCodes.Status400BadRequest,             // 400
+            _ => StatusCodes.Status500InternalServerError                          // 500
+        };
+
+        httpContext.Response.StatusCode = statusCode;
         httpContext.Response.ContentType = "application/json";
+
+        // 3. Đóng gói thông tin lỗi thành cấu trúc JSON chuẩn đẹp trả về Client
         var response = new
         {
-            Status = StatusCodes.Status500InternalServerError,
-            Message = "Đã có lỗi xảy ra ở hệ thống."
+            StatusCode = statusCode,
+            Message = exception.Message,
+            ErrorType = exception.GetType().Name
         };
 
         await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
 
+        // Trả về true để báo hiệu rằng hệ thống đã tự xử lý xong ngoại lệ này
         return true;
     }
 }
