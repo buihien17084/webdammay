@@ -21,6 +21,13 @@
             UserId = userId;
             CreatedAt = DateTime.Now;
         }
+        public void UpdateFileName(string newFileName)
+        {
+            if(string.IsNullOrWhiteSpace(newFileName))
+                throw new ArgumentException("Tên file mới không được để trống.");
+            FileName = newFileName.Trim();
+
+        }
         private StoredFile() { }
     }
 }

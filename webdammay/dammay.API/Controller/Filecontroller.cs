@@ -43,15 +43,15 @@ namespace webdammay.dammay.API.Controller
             return Ok(new { Message = "Lấy danh sách Files thành công", Data = result });
         }
         [HttpGet("{id}/download")]
-        public async Task<IActionResult> Downlaod( Guid Id)
+        public async Task<IActionResult> Downlaod(Guid Id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { Message = "Không tìm thấy người dùng" });
             var query = new GetFileQuery(Id, userId);
-            var result= await _mediator.Send(query);
-            return File(result.FileStream,result.ContentType, result.FileName);
-         }
+            var result = await _mediator.Send(query);
+            return File(result.FileStream, result.ContentType, result.FileName);
+        }
         [HttpDelete("{id}/Delete")]
         public async Task<IActionResult> Delete(Guid Id)
         {
@@ -59,23 +59,33 @@ namespace webdammay.dammay.API.Controller
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { Message = "Không tìm thấy danh tính người dùng." });
             var command = new DeleteFile(Id, userId);
-            var result=await _mediator.Send(command);
-            return Ok(new { Message ="Xóa File thành công.",Data=result});
+            var result = await _mediator.Send(command);
+            return Ok(new { Message = "Xóa File thành công.", Data = result });
         }
         [HttpGet]
         public async Task<IActionResult> GetMyFiles(
-        
-            [FromQuery] string ? searchTerm,
-            [FromQuery] int pageNumber =1,
-            [FromQuery] int pageSize =10
+
+            [FromQuery] string? searchTerm,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10
         )
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { Message = "Không tìm thấy danh tính người dùng." });
-            var query= new GetListFilesQuery(userId,searchTerm,pageNumber,pageSize);
-            var result= _mediator.Send(query);
+            var query = new GetListFilesQuery(userId, searchTerm, pageNumber, pageSize);
+            var result = _mediator.Send(query);
             return Ok(new { Message = "Lấy danh sách file thành công!", Data = result });
+        }
+        [HttpPatch("{id}/renam")]
+        public async Task<IActionResult> RenameFile(Guid id, [FromBody] RenameFileDto request)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { Message = "Không tìm thấy danh tính người dùng." });
+            var command = new RenameFileCommand(id, userId, request.NewFileName);
+            _mediator.Send(command);
+            return Ok(new { Messge = "Đổi tên file thành công! " });
         }
 
     }
