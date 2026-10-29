@@ -8,6 +8,9 @@
         public long FileSize { get; private set; }
         public string UserId { get; private set; }
         public DateTime CreatedAt { get; private set; }
+        public bool IsShared { get; private set; } = false;
+        public string ? ShareToken { get; private set; }
+
 
         public StoredFile(string fileName, string filePath, long fileSize, string userId)
         {
@@ -26,6 +29,16 @@
             if(string.IsNullOrWhiteSpace(newFileName))
                 throw new ArgumentException("Tên file mới không được để trống.");
             FileName = newFileName.Trim();
+
+        }
+        public string EnableSharing()
+        {
+            if (!IsShared || string.IsNullOrEmpty(ShareToken))
+            {
+                IsShared = true;
+                ShareToken = Guid.NewGuid().ToString("N");
+            }
+            return ShareToken;
 
         }
         private StoredFile() { }

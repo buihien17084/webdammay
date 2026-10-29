@@ -1,10 +1,13 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using webdammay.dammay.Application.Query.GetFiles;
-using webdammay.dammay.Application.Command.UploadFile;
 using webdammay.dammay.Application.Command.DeleteFile;
-using Microsoft.AspNetCore.Authorization;
+using webdammay.dammay.Application.Command.Rename;
+using webdammay.dammay.Application.Command.UploadFile;
+using webdammay.dammay.Application.Query.GetFiles;
+using webdammay.dammay.Application.Command.ShareFile;
+using webdammay.dammay.Application.Query.GetShareFile;
 namespace webdammay.dammay.API.Controller
 {
     [Authorize]
@@ -86,6 +89,25 @@ namespace webdammay.dammay.API.Controller
             var command = new RenameFileCommand(id, userId, request.NewFileName);
             _mediator.Send(command);
             return Ok(new { Messge = "Đổi tên file thành công! " });
+        }
+        [HttpPost("{id}/share")]
+        public async Task<IActionResult> ShareFile(Guid id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { Message = "Không tìm thấy danh tính người dùng." });
+            var command= new ShareFileCommand(id,userId);
+            var token= _mediator.Send(command);
+            var sharelink= $"{Request.Scheme}://{Request.Host}/api/files/shared/{token}";
+            return Ok(new { Message = "Tạo link chia sẻ thành công!", ShareLink = sharelink });
+         }
+        [HttpGet("shared/{token}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> DownloadSharedFile(string token)
+        {
+            var query = new GetSharedFileQuery(token);
+            var result = await _mediator.Send(query);
+            return File(result.FileStream, result.ContentType, result.FileName);
         }
 
     }

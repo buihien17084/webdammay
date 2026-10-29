@@ -27,6 +27,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             entity.Property(e => e.FileSize).IsRequired();
             entity.Property(e => e.UserId).IsRequired();
             entity.Property(e => e.CreatedAt).IsRequired();
+            entity.Property(e => e.IsShared).HasDefaultValue(false);
+            entity.Property(e => e.ShareToken).HasMaxLength(64);
         });
 
     }
