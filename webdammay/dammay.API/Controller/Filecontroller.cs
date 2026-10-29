@@ -62,6 +62,21 @@ namespace webdammay.dammay.API.Controller
             var result=await _mediator.Send(command);
             return Ok(new { Message ="Xóa File thành công.",Data=result});
         }
+        [HttpGet]
+        public async Task<IActionResult> GetMyFiles(
+        
+            [FromQuery] string ? searchTerm,
+            [FromQuery] int pageNumber =1,
+            [FromQuery] int pageSize =10
+        )
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { Message = "Không tìm thấy danh tính người dùng." });
+            var query= new GetListFilesQuery(userId,searchTerm,pageNumber,pageSize);
+            var result= _mediator.Send(query);
+            return Ok(new { Message = "Lấy danh sách file thành công!", Data = result });
+        }
 
     }
 }
