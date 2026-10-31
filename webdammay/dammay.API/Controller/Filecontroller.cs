@@ -61,7 +61,7 @@ namespace webdammay.dammay.API.Controller
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { Message = "Không tìm thấy danh tính người dùng." });
-            var command = new DeleteFile(Id, userId);
+            var command = new DeleteFileCommand(Id, userId);
             var result = await _mediator.Send(command);
             return Ok(new { Message = "Xóa File thành công.", Data = result });
         }

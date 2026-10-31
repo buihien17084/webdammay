@@ -17,12 +17,9 @@ namespace webdammay.dammay.Application.Command.UploadFile;
         _context = context;
     }
 
-    public Task<FileDto> Handle(UploadFileCommand request, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+   
 
-    public async Task<FileDto> Handler(UploadFileCommand request, CancellationToken cancellationToken)
+    public async Task<FileDto> Handle(UploadFileCommand request, CancellationToken cancellationToken)
     {
         long currentUsedStorage = await _context.StoredFiles
             .Where(f => f.UserId == request.UserId)

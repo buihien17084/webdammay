@@ -15,12 +15,7 @@ namespace webdammay.dammay.Application.Query.GetShareFile
             _fileStorageService = fileStorageService;
         }
 
-        public Task<FileDownloadDto> Handle(GetSharedFileQuery request, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<FileDownloadDto> Handler(GetSharedFileQuery request,CancellationToken cancellationToken)
+        public async Task<FileDownloadDto> Handle(GetSharedFileQuery request,CancellationToken cancellationToken)
         {
             var file=await _context.StoredFiles.FirstOrDefaultAsync(f=>f.ShareToken==request.token&&f.IsShared,cancellationToken);
             if(file == null)

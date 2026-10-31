@@ -14,12 +14,7 @@ namespace webdammay.dammay.Application.Query.GetFiles
             _fileStorageService = fileStorageService;
         }
 
-        public Task<FileDownloadDto> Handle(GetFileQuery request, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<FileDownloadDto> Handler(GetFileQuery request,CancellationToken cancellationToken)
+        public async Task<FileDownloadDto> Handle(GetFileQuery request,CancellationToken cancellationToken)
         {
             var file=await _context.StoredFiles.FirstOrDefaultAsync(f=>f.Id==request.FileId && f.UserId==request.UserId,cancellationToken);
             if(file==null)

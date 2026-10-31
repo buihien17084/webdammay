@@ -5,7 +5,7 @@ using webdammay.dammay.Application.Command.Interfaces;
 
 namespace webdammay.dammay.Application.Command.DeleteFile
 {
-    public class DeleteFileCommandHandler:IRequestHandler<DeleteFile,FileDto>
+    public class DeleteFileCommandHandler:IRequestHandler<DeleteFileCommand,FileDto>
     {
         private readonly IApplicationDbContext _context;
         private readonly IFileStorageService _fileStorageService;
@@ -15,12 +15,7 @@ namespace webdammay.dammay.Application.Command.DeleteFile
             _fileStorageService = fileStorageService;
         }
 
-        public Task<FileDto> Handle(DeleteFile request, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<FileDto> Handler (DeleteFile request,CancellationToken cancellationToken)
+        public async Task<FileDto> Handle (DeleteFileCommand request,CancellationToken cancellationToken)
         {
             var file= await _context.StoredFiles.FirstOrDefaultAsync(f=>f.Id == request.Id&&f.UserId==request.userId,cancellationToken);
             if (file == null)

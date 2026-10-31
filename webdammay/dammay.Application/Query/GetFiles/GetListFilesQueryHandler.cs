@@ -12,12 +12,7 @@ namespace webdammay.dammay.Application.Query.GetFiles
             _context = context;
         }
 
-        public Task<PaginatedListDto<FileListDto>> Handle(GetListFilesQuery request, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PaginatedListDto<FileListDto>> Handler (GetListFilesQuery request,CancellationToken cancellationToken)
+        public async Task<PaginatedListDto<FileListDto>> Handle (GetListFilesQuery request,CancellationToken cancellationToken)
         {
             var query = _context.StoredFiles.Where(f => f.UserId == request.Id);
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
